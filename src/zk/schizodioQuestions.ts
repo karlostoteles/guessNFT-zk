@@ -1,0 +1,521 @@
+/**
+ * All 418 Schizodio NFT trait questions.
+ *
+ * CRITICAL: The `id` field is the bit index in the trait_bitmap [u128;4].
+ * It maps directly to:
+ *   - `question_id: u16` in the Noir circuit
+ *   - `question_id: u16` in `ask_question()` on Starknet
+ *   - bit extraction: (bitmap[id/128] >> (id%128)) & 1
+ *
+ * Never reorder entries. Never change an id. The bit positions are fixed by
+ * the circuit and by every stored proof on-chain.
+ *
+ * Source: scripts/question-schema.ts (QUESTION_SCHEMA)
+ * Bit ranges: Accessories 0-6 | Background 7-95 | Body 96-105 | Clothing 106-179
+ *             Eyebrows 180-192 | Eyes 193-218 | Eyewear 219-224 | Hair 225-256
+ *             Headwear 257-300 | Mask 301-302 | Mouth 303-317 | Overlays 318-350
+ *             Sidekick 351-395 | Weapons 396-417
+ */
+
+export type SchizodioCategory =
+  | 'accessories'
+  | 'background'
+  | 'body'
+  | 'clothing'
+  | 'eyebrows'
+  | 'eyes'
+  | 'eyewear'
+  | 'hair'
+  | 'headwear'
+  | 'mask'
+  | 'mouth'
+  | 'overlays'
+  | 'sidekick'
+  | 'weapons';
+
+export interface SchizodioQuestion {
+  /** Bit index 0–417. This IS the question_id sent to the circuit and contract. */
+  id: number;
+  text: string;
+  category: SchizodioCategory;
+}
+
+// ─── Text generation helper ────────────────────────────────────────────────────
+
+function toTitle(snakeCase: string): string {
+  return snakeCase.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function makeText(category: SchizodioCategory, traitSnake: string): string {
+  const trait = toTitle(traitSnake);
+  switch (category) {
+    case 'accessories': return `Does your character have a ${trait}?`;
+    case 'background':  return `Is your character's background ${trait}?`;
+    case 'body':        return `Does your character have the ${trait} body type?`;
+    case 'clothing':    return `Does your character wear ${trait}?`;
+    case 'eyebrows':    return `Does your character have ${trait} eyebrows?`;
+    case 'eyes':        return `Does your character have ${trait} eyes?`;
+    case 'eyewear':     return `Does your character wear ${trait}?`;
+    case 'hair':        return `Does your character have ${trait} hair?`;
+    case 'headwear':    return `Does your character wear ${trait}?`;
+    case 'mask':        return `Does your character wear a ${trait} mask?`;
+    case 'mouth':       return `Does your character have a ${trait} mouth?`;
+    case 'overlays':    return `Does your character have the ${trait} overlay?`;
+    case 'sidekick':    return `Does your character have ${trait} as a sidekick?`;
+    case 'weapons':     return `Does your character carry ${trait}?`;
+  }
+}
+
+function q(id: number, category: SchizodioCategory, traitSnake: string): SchizodioQuestion {
+  return { id, category, text: makeText(category, traitSnake) };
+}
+
+// ─── All 418 questions ────────────────────────────────────────────────────────
+
+export const SCHIZODIO_QUESTIONS: SchizodioQuestion[] = [
+  // === Accessories (bits 0–6) ===
+  q(0,   'accessories', 'backwoods_blunt'),
+  q(1,   'accessories', 'god_candle'),
+  q(2,   'accessories', 'grime_reaper_candle'),
+  q(3,   'accessories', 'honey_comb_blunt'),
+  q(4,   'accessories', 'memory_card_chain'),
+  q(5,   'accessories', 'pixelated_ciggy'),
+  q(6,   'accessories', 'shotgun_shell_chain'),
+
+  // === Background (bits 7–95) ===
+  q(7,   'background', 'a_roads'),
+  q(8,   'background', 'akademia_italia'),
+  q(9,   'background', 'alotments'),
+  q(10,  'background', 'atms_ktms'),
+  q(11,  'background', 'bajan_bando'),
+  q(12,  'background', 'bajan_cliff_view'),
+  q(13,  'background', 'bajan_safehouse'),
+  q(14,  'background', 'bajan_villa'),
+  q(15,  'background', 'big_pharma'),
+  q(16,  'background', 'bitcoin_broly'),
+  q(17,  'background', 'black_pool'),
+  q(18,  'background', 'blue_cryptonite'),
+  q(19,  'background', 'blue_eyes_thunder_dragon'),
+  q(20,  'background', 'bonus_stage'),
+  q(21,  'background', 'cell_games'),
+  q(22,  'background', 'china'),
+  q(23,  'background', 'china_courtyard'),
+  q(24,  'background', 'chongqing'),
+  q(25,  'background', 'chongqing_2'),
+  q(26,  'background', 'chuppa_pillz'),
+  q(27,  'background', 'cloud_nine'),
+  q(28,  'background', 'countryside_1'),
+  q(29,  'background', 'countryside_2'),
+  q(30,  'background', 'county_line'),
+  q(31,  'background', 'cour_d_honneur'),
+  q(32,  'background', 'dmt'),
+  q(33,  'background', 'danube_river'),
+  q(34,  'background', 'dubai_desert'),
+  q(35,  'background', 'dubai_desert_2'),
+  q(36,  'background', 'duck_hunt'),
+  q(37,  'background', 'fenty_bando'),
+  q(38,  'background', 'fishermans_bastion'),
+  q(39,  'background', 'five_joints'),
+  q(40,  'background', 'friezas_ufo'),
+  q(41,  'background', 'hadoken'),
+  q(42,  'background', 'honest_werk'),
+  q(43,  'background', 'hong_kong'),
+  q(44,  'background', 'hongya_cave'),
+  q(45,  'background', 'hyperbolic_timechamber'),
+  q(46,  'background', 'jiggas_in_paris'),
+  q(47,  'background', 'jumeirah_beach_residence'),
+  q(48,  'background', 'kong_island'),
+  q(49,  'background', 'light_mist'),
+  q(50,  'background', 'magyar_llami_operhz'),
+  q(51,  'background', 'marina_skyline'),
+  q(52,  'background', 'marky_b'),
+  q(53,  'background', 'mega_drive'),
+  q(54,  'background', 'money_shot'),
+  q(55,  'background', 'museum_of_the_future'),
+  q(56,  'background', 'nycafe'),
+  q(57,  'background', 'nacht_der_untoten'),
+  q(58,  'background', 'nacht_der_untoten_2'),
+  q(59,  'background', 'nity_ave'),
+  q(60,  'background', 'open_sea'),
+  q(61,  'background', 'open_sea_2'),
+  q(62,  'background', 'palm_jumeirah'),
+  q(63,  'background', 'paradise_1'),
+  q(64,  'background', 'paradise_2'),
+  q(65,  'background', 'paradise_3'),
+  q(66,  'background', 'paradise_4'),
+  q(67,  'background', 'paradise_5'),
+  q(68,  'background', 'paradise_6'),
+  q(69,  'background', 'pepe_pillz'),
+  q(70,  'background', 'phantom'),
+  q(71,  'background', 'pick_n_mix'),
+  q(72,  'background', 'pink_champagne'),
+  q(73,  'background', 'planet_kai'),
+  q(74,  'background', 'raffles_city'),
+  q(75,  'background', 'rekt_bardock'),
+  q(76,  'background', 'richard_haynes_boardwalk'),
+  q(77,  'background', 'snes_cartridge'),
+  q(78,  'background', 'schizo_yoshi_kart'),
+  q(79,  'background', 'shang_tsungs_palace'),
+  q(80,  'background', 'sleepy_hollow'),
+  q(81,  'background', 'star_dawg'),
+  q(82,  'background', 'szechenyi_lanchid'),
+  q(83,  'background', 'tesla_pillz'),
+  q(84,  'background', 'the_canal'),
+  q(85,  'background', 'the_endz_2'),
+  q(86,  'background', 'the_marina'),
+  q(87,  'background', 'the_office_szn1'),
+  q(88,  'background', 'the_office_szn2'),
+  q(89,  'background', 'the_peak'),
+  q(90,  'background', 'the_pit'),
+  q(91,  'background', 'the_endz'),
+  q(92,  'background', 'touch_grass'),
+  q(93,  'background', 'ups_pillz'),
+  q(94,  'background', 'white_widow'),
+  q(95,  'background', 'yangtze_river'),
+
+  // === Body (bits 96–105) ===
+  q(96,  'body', 'boy_who_cried_wolf'),
+  q(97,  'body', 'brother'),
+  q(98,  'body', 'gora'),
+  q(99,  'body', 'greeny'),
+  q(100, 'body', 'lobster_pink'),
+  q(101, 'body', 'purple_urkle'),
+  q(102, 'body', 'schizo_blue'),
+  q(103, 'body', 'schizo_panda'),
+  q(104, 'body', 'snowflake'),
+  q(105, 'body', 'stone_cyborg'),
+
+  // === Clothing (bits 106–179) ===
+  q(106, 'clothing', 'adhd_tshirt'),
+  q(107, 'clothing', 'agbada_tshirt'),
+  q(108, 'clothing', 'apestar_jacket'),
+  q(109, 'clothing', 'argent_tshirt'),
+  q(110, 'clothing', 'autism_jumper'),
+  q(111, 'clothing', 'baby_schizo_pink_tshirt'),
+  q(112, 'clothing', 'baby_schizo_white_tshirt'),
+  q(113, 'clothing', 'backwoods_hoodie'),
+  q(114, 'clothing', 'bitchari_t_shirt'),
+  q(115, 'clothing', 'black_jacket'),
+  q(116, 'clothing', 'blue_puffer'),
+  q(117, 'clothing', 'bob_sponge_tshirt'),
+  q(118, 'clothing', 'chaatgpt_tshirt'),
+  q(119, 'clothing', 'ethlend_tshirt'),
+  q(120, 'clothing', 'ekubo_tshirt'),
+  q(121, 'clothing', 'faguar_tshirt'),
+  q(122, 'clothing', 'flintstones_tshirt'),
+  q(123, 'clothing', 'get_money_tshirt'),
+  q(124, 'clothing', 'gods_strongest_schizo'),
+  q(125, 'clothing', 'gold_skull_shirt'),
+  q(126, 'clothing', 'golden_boy_tracksuit'),
+  q(127, 'clothing', 'goochi_track_jacket'),
+  q(128, 'clothing', 'guru_suit'),
+  q(129, 'clothing', 'i_am_carrying_tshirt'),
+  q(130, 'clothing', 'i_have_a_weapon'),
+  q(131, 'clothing', 'im_with_schizodio_tshirt'),
+  q(132, 'clothing', 'israeli_coin_tshirt'),
+  q(133, 'clothing', 'krusty_tshirt'),
+  q(134, 'clothing', 'kurta_jeet'),
+  q(135, 'clothing', 'life_is_soup_tshirt'),
+  q(136, 'clothing', 'love_nigeria_tshirt'),
+  q(137, 'clothing', 'luv_cobie_tshirt'),
+  q(138, 'clothing', 'mushroom_jacket'),
+  q(139, 'clothing', 'mushroomon_jacket'),
+  q(140, 'clothing', 'okay_now_tshirt'),
+  q(141, 'clothing', 'paradex_tshirt'),
+  q(142, 'clothing', 'peaky_blind_tshirt'),
+  q(143, 'clothing', 'pink_puffer'),
+  q(144, 'clothing', 'polymarket_tshirt'),
+  q(145, 'clothing', 'puff_tshirt'),
+  q(146, 'clothing', 'purple_aki_tshirt'),
+  q(147, 'clothing', 'purple_tuxedo'),
+  q(148, 'clothing', 'relax_vest'),
+  q(149, 'clothing', 'remilia_jacket'),
+  q(150, 'clothing', 'slm_tshirt'),
+  q(151, 'clothing', 'saiyan_suit'),
+  q(152, 'clothing', 'scared_of_women'),
+  q(153, 'clothing', 'schizario_tshirt'),
+  q(154, 'clothing', 'schizo_duck_tshirt'),
+  q(155, 'clothing', 'schizo_game_tshirt'),
+  q(156, 'clothing', 'schizo_hut_tshirt'),
+  q(157, 'clothing', 'schizo_network_tshirt'),
+  q(158, 'clothing', 'schizo_red_tshirt'),
+  q(159, 'clothing', 'schizo_tunez_tshirt'),
+  q(160, 'clothing', 'schizoberry_tshirt'),
+  q(161, 'clothing', 'schizodio_company_blue_tshirt'),
+  q(162, 'clothing', 'schizodio_company_brown_tshirt'),
+  q(163, 'clothing', 'school_uniform'),
+  q(164, 'clothing', 'spider_tshirt'),
+  q(165, 'clothing', 'squid_jacket'),
+  q(166, 'clothing', 'starkware_alf_tshirt'),
+  q(167, 'clothing', 'starknet_tshirt'),
+  q(168, 'clothing', 'stoney_puffer'),
+  q(169, 'clothing', 'stop_being_poor_vest'),
+  q(170, 'clothing', 'strapped_schizo_tshirt'),
+  q(171, 'clothing', 'tamil_tiger_tshirt'),
+  q(172, 'clothing', 'they_tshirt'),
+  q(173, 'clothing', 'turkey_camo_tshirt'),
+  q(174, 'clothing', 'turkey_track_jacket'),
+  q(175, 'clothing', 'turquoise_tuxedo'),
+  q(176, 'clothing', 'tuxedo'),
+  q(177, 'clothing', 'venom_suit'),
+  q(178, 'clothing', 'xverse_tshirt'),
+  q(179, 'clothing', 'zero_tshirt'),
+
+  // === Eyebrows (bits 180–192) ===
+  q(180, 'eyebrows', 'black_notched_slits'),
+  q(181, 'eyebrows', 'black_slits'),
+  q(182, 'eyebrows', 'blue_notched_slit'),
+  q(183, 'eyebrows', 'cyan_camo'),
+  q(184, 'eyebrows', 'funky'),
+  q(185, 'eyebrows', 'purple_camo'),
+  q(186, 'eyebrows', 'purple_slits'),
+  q(187, 'eyebrows', 'red_eyebrows'),
+  q(188, 'eyebrows', 'sad'),
+  q(189, 'eyebrows', 'schizodio_blue'),
+  q(190, 'eyebrows', 'standard'),
+  q(191, 'eyebrows', 'standard_2'),
+  q(192, 'eyebrows', 'tinted_green_notched_slit'),
+
+  // === Eyes (bits 193–218) ===
+  q(193, 'eyes', 'blood_shot'),
+  q(194, 'eyes', 'confusion'),
+  q(195, 'eyes', 'crying'),
+  q(196, 'eyes', 'dead'),
+  q(197, 'eyes', 'dead_splash'),
+  q(198, 'eyes', 'ekubo_bionic_eyes'),
+  q(199, 'eyes', 'fire_devil'),
+  q(200, 'eyes', 'four_spots'),
+  q(201, 'eyes', 'green_pilled'),
+  q(202, 'eyes', 'hazelnut'),
+  q(203, 'eyes', 'kanos_bionic_eyes'),
+  q(204, 'eyes', 'milady_blue'),
+  q(205, 'eyes', 'milady_green'),
+  q(206, 'eyes', 'milady_schizo_tattoo'),
+  q(207, 'eyes', 'purple_urkle'),
+  q(208, 'eyes', 'remilio_light_green'),
+  q(209, 'eyes', 'reptilian_red'),
+  q(210, 'eyes', 'schizo_green'),
+  q(211, 'eyes', 'schizo_light_blue'),
+  q(212, 'eyes', 'schizo_og_white'),
+  q(213, 'eyes', 'schizo_purple'),
+  q(214, 'eyes', 'schizo_red'),
+  q(215, 'eyes', 'schizo_tattoo_eyes'),
+  q(216, 'eyes', 'schizo_yellow'),
+  q(217, 'eyes', 'stoned_red'),
+  q(218, 'eyes', 'whirlpool'),
+
+  // === Eyewear (bits 219–224) ===
+  q(219, 'eyewear', 'safety_glasses_blue'),
+  q(220, 'eyewear', 'safety_glasses_green'),
+  q(221, 'eyewear', 'safety_glasses_orange'),
+  q(222, 'eyewear', 'safety_glasses_pink'),
+  q(223, 'eyewear', 'safety_glasses_purple'),
+  q(224, 'eyewear', 'schizo_scouter'),
+
+  // === Hair (bits 225–256) ===
+  q(225, 'hair', 'black_jellycut'),
+  q(226, 'hair', 'black_pompadour'),
+  q(227, 'hair', 'blondie_brown_pompadour'),
+  q(228, 'hair', 'blue_sherbert_fringe_flow'),
+  q(229, 'hair', 'brown_curtain_bob'),
+  q(230, 'hair', 'brown_fringe_flow'),
+  q(231, 'hair', 'cyan_blue_pompadour'),
+  q(232, 'hair', 'dark_green_jelly_cut'),
+  q(233, 'hair', 'dark_red_fringe_flow'),
+  q(234, 'hair', 'fringe_cyan'),
+  q(235, 'hair', 'fringe_pink'),
+  q(236, 'hair', 'fringe_white'),
+  q(237, 'hair', 'ginger_curtain_bob'),
+  q(238, 'hair', 'green_fringe_flow'),
+  q(239, 'hair', 'green_jellycut'),
+  q(240, 'hair', 'light_blonde_pompadour'),
+  q(241, 'hair', 'milady_black'),
+  q(242, 'hair', 'milady_dark_blue'),
+  q(243, 'hair', 'milady_green'),
+  q(244, 'hair', 'milady_red'),
+  q(245, 'hair', 'purple_curtain_bob'),
+  q(246, 'hair', 'purple_pompadour'),
+  q(247, 'hair', 'quan_orange'),
+  q(248, 'hair', 'quan_pink'),
+  q(249, 'hair', 'quan_red_black'),
+  q(250, 'hair', 'rainbow_curtain_bob'),
+  q(251, 'hair', 'rainbow_sherbet_fringe_flow'),
+  q(252, 'hair', 'red_jellycut'),
+  q(253, 'hair', 'remilio_madoka'),
+  q(254, 'hair', 'remilio_madoka_red'),
+  q(255, 'hair', 'white_jellycut'),
+  q(256, 'hair', 'yellowy_orange_curtain_bob'),
+
+  // === Headwear (bits 257–300) ===
+  q(257, 'headwear', '90s_trapstar'),
+  q(258, 'headwear', 'birka_red'),
+  q(259, 'headwear', 'clown_headwarmer'),
+  q(260, 'headwear', 'eth_hodl_cap'),
+  q(261, 'headwear', 'ekubo_cap'),
+  q(262, 'headwear', 'espeon_beaniee'),
+  q(263, 'headwear', 'fedora_hat'),
+  q(264, 'headwear', 'frieza_helmet'),
+  q(265, 'headwear', 'frog_hat'),
+  q(266, 'headwear', 'frogsplash_winterhat'),
+  q(267, 'headwear', 'fwog_hybrid_hat'),
+  q(268, 'headwear', 'gengar_winterhat'),
+  q(269, 'headwear', 'hex_cap'),
+  q(270, 'headwear', 'hodl_btc_cap'),
+  q(271, 'headwear', 'halo'),
+  q(272, 'headwear', 'ikea_bucket_hat'),
+  q(273, 'headwear', 'jamaican_clown_headwarmer'),
+  q(274, 'headwear', 'jesus_cross_cap'),
+  q(275, 'headwear', 'msga_cap'),
+  q(276, 'headwear', 'monster_ink_bucket_hat'),
+  q(277, 'headwear', 'nigerian_clown_headwarmer'),
+  q(278, 'headwear', 'oasis_cap'),
+  q(279, 'headwear', 'pepe_indian_russian_hat'),
+  q(280, 'headwear', 'pika_hat'),
+  q(281, 'headwear', 'polymarket_cap'),
+  q(282, 'headwear', 'rainbow_squid_hat'),
+  q(283, 'headwear', 'remilia_black_cap'),
+  q(284, 'headwear', 'remilia_cap'),
+  q(285, 'headwear', 'remilia_greeny_gold_cap'),
+  q(286, 'headwear', 'ronnie_beanie'),
+  q(287, 'headwear', 'schizodio_bucket_hat'),
+  q(288, 'headwear', 'schizodio_headband'),
+  q(289, 'headwear', 'slink_cap'),
+  q(290, 'headwear', 'sonic_beanie'),
+  q(291, 'headwear', 'starknet_pirate_hat'),
+  q(292, 'headwear', 'strawberry_winterhat'),
+  q(293, 'headwear', 'stwo_cap'),
+  q(294, 'headwear', 'tinchu_hat'),
+  q(295, 'headwear', 'toy_alien_cap'),
+  q(296, 'headwear', 'turban'),
+  q(297, 'headwear', 'uganda_schizo_cap'),
+  q(298, 'headwear', 'umbreon_beanie'),
+  q(299, 'headwear', 'wif_beanie'),
+  q(300, 'headwear', 'xverse_cap'),
+
+  // === Mask (bits 301–302) ===
+  q(301, 'mask', 'cyborg_hypio'),
+  q(302, 'mask', 'schizodio_og_mask'),
+
+  // === Mouth (bits 303–317) ===
+  q(303, 'mouth', 'happy'),
+  q(304, 'mouth', 'neutral'),
+  q(305, 'mouth', 'open'),
+  q(306, 'mouth', 'rectangle'),
+  q(307, 'mouth', 'smiley'),
+  q(308, 'mouth', 'squiggle'),
+  q(309, 'mouth', 'squiggly'),
+  q(310, 'mouth', 'squiggly_blue'),
+  q(311, 'mouth', 'symbiote'),
+  q(312, 'mouth', 'u'),
+  q(313, 'mouth', 'u_blue'),
+  q(314, 'mouth', 'v'),
+  q(315, 'mouth', 'v_blue'),
+  q(316, 'mouth', 'w'),
+  q(317, 'mouth', 'w_red'),
+
+  // === Overlays (bits 318–350) ===
+  q(318, 'overlays', 'abdel_called_me'),
+  q(319, 'overlays', 'alexa_hears'),
+  q(320, 'overlays', 'bastard_guy'),
+  q(321, 'overlays', 'black_panther_tamil_tiger'),
+  q(322, 'overlays', 'downstairs_upstairs'),
+  q(323, 'overlays', 'duck_hunt_cartridge'),
+  q(324, 'overlays', 'eating_the_pets'),
+  q(325, 'overlays', 'hai_hai'),
+  q(326, 'overlays', 'happy_schizo_pack'),
+  q(327, 'overlays', 'i_believed_in_something'),
+  q(328, 'overlays', 'i_just_got_skemmed'),
+  q(329, 'overlays', 'i_never_rugged'),
+  q(330, 'overlays', 'i_is_carrying'),
+  q(331, 'overlays', 'is_my_bitch'),
+  q(332, 'overlays', 'its_not_illegal'),
+  q(333, 'overlays', 'milady_munchies'),
+  q(334, 'overlays', 'nigerian_gun_fingers'),
+  q(335, 'overlays', 'punk_ass_schizo'),
+  q(336, 'overlays', 'schizo_cali_pack'),
+  q(337, 'overlays', 'schizo_headshot'),
+  q(338, 'overlays', 'schizo_mylar_pack'),
+  q(339, 'overlays', 'sherbinski'),
+  q(340, 'overlays', 'there_is_a_meme'),
+  q(341, 'overlays', 'this_my_jigga'),
+  q(342, 'overlays', 'turkey_twizzlers'),
+  q(343, 'overlays', 'turkish_barber'),
+  q(344, 'overlays', 'wmt'),
+  q(345, 'overlays', 'why_so_serious'),
+  q(346, 'overlays', 'winmeth'),
+  q(347, 'overlays', 'you_will_never_find_me'),
+  q(348, 'overlays', 'your_soul_is_mine'),
+  q(349, 'overlays', 'zabubu_pack'),
+  q(350, 'overlays', 'isupport'),
+
+  // === Sidekick (bits 351–395) ===
+  q(351, 'sidekick', 'alf'),
+  q(352, 'sidekick', 'arnesh'),
+  q(353, 'sidekick', 'baboon'),
+  q(354, 'sidekick', 'bernard'),
+  q(355, 'sidekick', 'billy_no_mates'),
+  q(356, 'sidekick', 'black_kangal'),
+  q(357, 'sidekick', 'blanka'),
+  q(358, 'sidekick', 'blobby'),
+  q(359, 'sidekick', 'chiliz'),
+  q(360, 'sidekick', 'copium_linctus_pro'),
+  q(361, 'sidekick', 'cow'),
+  q(362, 'sidekick', 'd_balls'),
+  q(363, 'sidekick', 'dancing_triangle'),
+  q(364, 'sidekick', 'devil'),
+  q(365, 'sidekick', 'dexter'),
+  q(366, 'sidekick', 'doll'),
+  q(367, 'sidekick', 'dragon'),
+  q(368, 'sidekick', 'eddie'),
+  q(369, 'sidekick', 'eli_owl'),
+  q(370, 'sidekick', 'evil_alf'),
+  q(371, 'sidekick', 'grim_reaper'),
+  q(372, 'sidekick', 'hey_mamma'),
+  q(373, 'sidekick', 'kazuya'),
+  q(374, 'sidekick', 'kekec'),
+  q(375, 'sidekick', 'kevin_perry'),
+  q(376, 'sidekick', 'kevin_perry_2'),
+  q(377, 'sidekick', 'laughing'),
+  q(378, 'sidekick', 'lean_harry'),
+  q(379, 'sidekick', 'mojo'),
+  q(380, 'sidekick', 'monkey_bomb'),
+  q(381, 'sidekick', 'ogb'),
+  q(382, 'sidekick', 'percy'),
+  q(383, 'sidekick', 'pinky'),
+  q(384, 'sidekick', 'ponziland'),
+  q(385, 'sidekick', 'purple_aki'),
+  q(386, 'sidekick', 'randall'),
+  q(387, 'sidekick', 'schizo_barney'),
+  q(388, 'sidekick', 'schizo_barney_2'),
+  q(389, 'sidekick', 'sifu'),
+  q(390, 'sidekick', 'slinky'),
+  q(391, 'sidekick', 'sol_snatcher'),
+  q(392, 'sidekick', 'toasty'),
+  q(393, 'sidekick', 'tuff_times'),
+  q(394, 'sidekick', 'weasel'),
+  q(395, 'sidekick', 'yasin_sidekick'),
+
+  // === Weapons (bits 396–417) ===
+  q(396, 'weapons', 'ak47_pixel_green'),
+  q(397, 'weapons', 'avnu_machete'),
+  q(398, 'weapons', 'blades_sword'),
+  q(399, 'weapons', 'braavos_shield'),
+  q(400, 'weapons', 'duck_hunt_gun'),
+  q(401, 'weapons', 'hyperlane_bazooka'),
+  q(402, 'weapons', 'man_hunt_bat'),
+  q(403, 'weapons', 'man_hunt_chainsaw'),
+  q(404, 'weapons', 'man_hunt_spade'),
+  q(405, 'weapons', 'nigerian_gun'),
+  q(406, 'weapons', 'paradex_axe'),
+  q(407, 'weapons', 'purps_hammer'),
+  q(408, 'weapons', 'red_hammer'),
+  q(409, 'weapons', 'schizo_unicorn_blaster'),
+  q(410, 'weapons', 'soul_sword'),
+  q(411, 'weapons', 'soul_sword_2'),
+  q(412, 'weapons', 'spamco_arcade_gun'),
+  q(413, 'weapons', 'sushi_shooter'),
+  q(414, 'weapons', 'sword'),
+  q(415, 'weapons', 'syrup_bat'),
+  q(416, 'weapons', 'turkish_shooter'),
+  q(417, 'weapons', 'why_serious_shooter'),
+];

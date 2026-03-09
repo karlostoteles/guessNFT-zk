@@ -1,0 +1,41 @@
+{
+    "menu": {
+        "title": "Adivina bien, gana el doble",
+        "badge": "SCHIZODIO Estreno",
+        "subtitle": "El clásico juego familiar, ahora tuyo",
+        "practice": "Práctica Gratis",
+        "practice_sub": "Local",
+        "play_real": "Play with ZK",
+        "play_real_sub": "Flujo ZK directo",
+        "ct_version": "CT",
+        "ct_version_sub": "Personajes meme de Crypto Twitter",
+        "nft_version": "Versión NFT",
+        "nft_version_sub": "¡Conecta tu wallet y juega con tus NFTs!",
+        "normal": "Normal",
+        "normal_sub": "1v1 Clásico — cada jugador elige su SCHIZODIO",
+        "schizo_mode": "Modo SCHIZO",
+        "schizo_mode_sub": "Apuesta tu SCHIZODIO contra el de tu oponente",
+        "coming_soon": "PRÓXIMAMENTE",
+        "free_to_play": "1vsAI",
+        "online": "ONLINE",
+        "back": "Atrás"
+    },
+    "auth": {
+        "login": "Conectar",
+        "authenticating": "Autenticando..."
+    },
+    "game": {
+        "risk_it": "Arriésgate",
+        "my_card": "MI CARTA",
+        "enemy_info": "INFO RIVAL",
+        "they_know": "Ellos Saben",
+        "nothing_yet": "Nada aún",
+        "i_know": "Yo Sé",
+        "confirmed": "CONFIRMADO",
+        "ask_question": "Haz una Pregunta",
+        "free_question": "Pista Gratis",
+        "thinking": "Pensando...",
+        "board": "TABLERO",
+        "schizodio_traits": "RASGOS SCHIZODIO"
+    }
+}

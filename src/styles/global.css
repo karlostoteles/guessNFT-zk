@@ -1,0 +1,90 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0f0e17;
+  color: #FFFFFE;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.25);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Logo glow — pulsing blurred gradient behind logo ── */
+@keyframes logoGlowBg {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  33% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  66% {
+    opacity: 0.75;
+    transform: scale(1.03);
+  }
+}
+
+.logo-glow-bg {
+  animation: logoGlowBg 4s ease-in-out infinite;
+}
+
+/* ── Mobile responsiveness ─────────────────────────────────────────────────── */
+
+/* Smooth touch scrolling in modals */
+.scroll-container {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent double-tap zoom on buttons */
+button, a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure nothing breaks out of viewport */
+@media (max-width: 480px) {
+  /* Shrink the 3D canvas overlay so panels don't clip */
+  body {
+    overflow: hidden;
+  }
+
+  /* Safe area on notched phones */
+  #root {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* iOS prevents 100vh overlays from covering the nav bar without this */
+@supports (-webkit-touch-callout: none) {
+  .fullscreen-overlay {
+    min-height: -webkit-fill-available;
+  }
+}

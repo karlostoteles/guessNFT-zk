@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0a0a17"/>
+      <stop offset="100%" stop-color="#12103a"/>
+    </linearGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="50%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#6D28D9"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="20" x2="0" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F0C060"/>
+      <stop offset="100%" stop-color="#E8A444"/>
+    </linearGradient>
+    <linearGradient id="pink" x1="0" y1="20" x2="0" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F472B6"/>
+      <stop offset="100%" stop-color="#DB2777"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <circle cx="32" cy="32" r="32" fill="url(#bg)"/>
+  <!-- Neon ring -->
+  <circle cx="32" cy="32" r="26" fill="none" stroke="url(#ring)" stroke-width="2.5" opacity="0.8"/>
+  <circle cx="32" cy="32" r="26" fill="none" stroke="#A855F7" stroke-width="0.5" opacity="0.4"/>
+  <!-- GN? text -->
+  <text x="14" y="38" font-family="Arial Black, Impact, sans-serif" font-size="20" font-weight="900" fill="url(#gold)">G</text>
+  <text x="28" y="38" font-family="Arial Black, Impact, sans-serif" font-size="20" font-weight="900" fill="url(#pink)">N</text>
+  <text x="43" y="36" font-family="Arial Black, Impact, sans-serif" font-size="18" font-weight="900" fill="#F5F5FA" opacity="0.9">?</text>
+  <!-- guessNFT subtitle -->
+  <text x="32" y="52" font-family="Arial, sans-serif" font-size="6" font-weight="700" fill="#A78BFA" text-anchor="middle" letter-spacing="0.5">guessNFT</text>
+</svg>

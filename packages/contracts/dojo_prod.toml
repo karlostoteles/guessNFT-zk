@@ -1,0 +1,16 @@
+[world]
+name = "WhoisWho"
+description = "On-chain game logic for WhoisWho online multiplayer."
+seed = "whoiswho_mainnet_20260303"
+
+[namespace]
+default = "whoiswho"
+
+[env]
+rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
+# account_address = "0x..."
+# private_key = "0x..."
+# world_address = "0x..."
+
+[writers]
+"whoiswho" = ["whoiswho-game_actions"]

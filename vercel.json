@@ -1,0 +1,46 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/api/nft-art/:id",
+      "destination": "/api/nft-art?id=:id"
+    },
+    {
+      "source": "/api/nft-art-thumb/:id",
+      "destination": "/api/nft-art?id=:id"
+    },
+    {
+      "source": "/api/nft-img/:hash",
+      "destination": "/api/nft-img?hash=:hash"
+    },
+    {
+      "source": "/api/schizodio-meta/:id",
+      "destination": "/api/schizodio-meta?id=:id"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/api/(nft-art|nft-img|schizodio-meta)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=31536000, max-age=86400, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+[package]
+name = "whoiswho_answer"
+type = "bin"
+authors = []
+compiler_version = ">=0.1.0" # Tested with 1.0.0-beta.16 — pre-release, can't pin via semver
+
+[dependencies]

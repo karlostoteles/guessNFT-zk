@@ -1,0 +1,41 @@
+{
+    "menu": {
+        "title": "Guess it right, win twice",
+        "badge": "SCHIZODIO Premiere",
+        "subtitle": "The classic family game, now... less classic",
+        "practice": "Practice for Free",
+        "practice_sub": "Local",
+        "play_real": "Play with ZK",
+        "play_real_sub": "Direct ZK Flow",
+        "ct_version": "CT",
+        "ct_version_sub": "Crypto Twitter meme characters",
+        "nft_version": "NFT version",
+        "nft_version_sub": "Connect wallet & play with your NFTs",
+        "normal": "Normal",
+        "normal_sub": "Classic 1v1 — each player picks their SCHIZODIO",
+        "schizo_mode": "SCHIZO Mode",
+        "schizo_mode_sub": "Bet your SCHIZODIO against your opponent's",
+        "coming_soon": "SOON",
+        "free_to_play": "1vsAI",
+        "online": "ONLINE",
+        "back": "Back"
+    },
+    "auth": {
+        "login": "Login",
+        "authenticating": "Authenticating..."
+    },
+    "game": {
+        "risk_it": "Risk It",
+        "my_card": "MY CARD",
+        "enemy_info": "ENEMY INFO",
+        "they_know": "They Know",
+        "nothing_yet": "Nothing yet",
+        "i_know": "I Know",
+        "confirmed": "CONFIRMED",
+        "ask_question": "Ask a Question",
+        "free_question": "Free Question",
+        "thinking": "Thinking...",
+        "board": "BOARD",
+        "schizodio_traits": "SCHIZODIO TRAITS"
+    }
+}
