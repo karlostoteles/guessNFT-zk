@@ -75,6 +75,25 @@ After those checks pass, it calls the Garaga-generated verifier and accepts the 
 
 If successful, the contract extracts the answer bit from the proof's public outputs and writes the verified answer into the `Turn` model.
 
+## Deployed addresses
+
+### Starknet Sepolia
+
+| Contract | Address |
+|---|---|
+| Garaga verifier (`UltraKeccakZKHonkVerifier`) | `0x64cb378d475b6247b0bbbe5ff5c3ec0615fbc2d63ed8e09b55e39c0a8597595` |
+| Dojo world | `0x507034b9c9dbc0a9a2e093a53ccca22ac105a2f74c23fa33ee2c1a67b543563` |
+| `game_actions` system | `0x62e30cd3bdca8569228c02f72979ccb2697db361f55a258a831cf7197a4be35` |
+
+Explorer links:
+- [Verifier on Voyager](https://sepolia.voyager.online/contract/0x64cb378d475b6247b0bbbe5ff5c3ec0615fbc2d63ed8e09b55e39c0a8597595)
+- [World on Voyager](https://sepolia.voyager.online/contract/0x507034b9c9dbc0a9a2e093a53ccca22ac105a2f74c23fa33ee2c1a67b543563)
+- [game_actions on Voyager](https://sepolia.voyager.online/contract/0x62e30cd3bdca8569228c02f72979ccb2697db361f55a258a831cf7197a4be35)
+
+Deployment notes:
+- Deployed with sncast `0.57.0` + sozo `1.8.6` (required for Sepolia blake2s CASM hashing)
+- Full addresses also saved in `.deploy-sepolia.env` at project root
+
 ## Build and migrate
 
 ```bash
@@ -88,7 +107,8 @@ sozo migrate
 Version pins live in [`Scarb.toml`](Scarb.toml). At the time of this repo snapshot:
 
 - Cairo: `2.13.1`
-- Dojo: `1.8.0`
+- Dojo: `1.8.0` (local) / `1.8.6` required for Sepolia deploy
+- sncast: `0.51.2` (local) / `0.57.0` required for Sepolia declare
 
 ## Related packages
 

@@ -1,0 +1,16 @@
+[world]
+name = "WhoisWho"
+description = "On-chain game logic for WhoisWho online multiplayer."
+seed = "whoiswho_sepolia_20260308"
+
+[namespace]
+default = "whoiswho"
+
+[env]
+rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
+# account_address = "0x..."  ← fill before running sozo migrate
+# private_key = "0x..."      ← fill before running sozo migrate
+# world_address = "0x..."    ← fill after first sozo migrate (for upgrades)
+
+[writers]
+"whoiswho" = ["whoiswho-game_actions"]
