@@ -127,6 +127,21 @@ scripts/                   Collection prep, deploy, proof, and E2E validation sc
 docs/                      Architecture, proof flow, and local dev docs
 ```
 
+## Deployed addresses
+
+### Starknet Sepolia
+
+| Contract | Address |
+|---|---|
+| Garaga verifier (`UltraKeccakZKHonkVerifier`) | `0x64cb378d475b6247b0bbbe5ff5c3ec0615fbc2d63ed8e09b55e39c0a8597595` |
+| Dojo world | `0x507034b9c9dbc0a9a2e093a53ccca22ac105a2f74c23fa33ee2c1a67b543563` |
+| `game_actions` system | `0x62e30cd3bdca8569228c02f72979ccb2697db361f55a258a831cf7197a4be35` |
+
+Explorer links:
+- [Verifier on Voyager](https://sepolia.voyager.online/contract/0x64cb378d475b6247b0bbbe5ff5c3ec0615fbc2d63ed8e09b55e39c0a8597595)
+- [World on Voyager](https://sepolia.voyager.online/contract/0x507034b9c9dbc0a9a2e093a53ccca22ac105a2f74c23fa33ee2c1a67b543563)
+- [game_actions on Voyager](https://sepolia.voyager.online/contract/0x62e30cd3bdca8569228c02f72979ccb2697db361f55a258a831cf7197a4be35)
+
 ## Documentation for judges
 
 - [Architecture](docs/ARCHITECTURE.md)
