@@ -9,7 +9,7 @@ packages/contracts/target/
 packages/contracts/.scarb-cache/
 packages/contracts/manifest_dev.json
 packages/contracts/manifest.json
-packages/circuits/target/
+# packages/circuits/target/ — committed for Netlify builds (no nargo in CI)
 packages/circuits/proof_out*/
 packages/circuits/proof.bin
 packages/verifier/target/
