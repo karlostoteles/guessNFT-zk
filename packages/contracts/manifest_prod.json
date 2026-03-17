@@ -34,7 +34,7 @@
   "contracts": [
     {
       "address": "0x50ca0b06629af807a94c92ac75ee68658a1631340a57095a8e37f4290fbf1d3",
-      "class_hash": "0xd7db233a6fbed626a8a611a2844016c9b4c909c3d8971a74f227e98ce906e6",
+      "class_hash": "0x69a6987cb1aac4612cdc785d7a0d088abea01f1539f8b38a0a57989600945eb",
       "init_calldata": [],
       "tag": "whoiswho-game_actions",
       "selector": "0x546d8517ca0b1a28679a2ef67f4445e55c1c811240988da6a78c636e2cbacec",

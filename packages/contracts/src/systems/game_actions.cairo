@@ -286,7 +286,7 @@ pub mod game_actions {
             // Garaga verifier checks that the proof is consistent with the public inputs
             // supplied in the calldata prefix above. If it passes, the answer_bit at PI[6]
             // is cryptographically bound to the player's committed character.
-            let verifier_addr = contract_address_const::<constants::VERIFIER_ADDRESS_SEPOLIA>();
+            let verifier_addr = contract_address_const::<constants::VERIFIER_ADDRESS_MAINNET>();
             assert(!verifier_addr.is_zero(), errors::ERR_VERIFIER_NOT_DEPLOYED);
             let verifier = IUltraKeccakZKHonkVerifierDispatcher {
                 contract_address: verifier_addr,

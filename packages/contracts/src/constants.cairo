@@ -41,9 +41,8 @@ pub const U128_BASE: felt252 = 0x100000000000000000000000000000000;
 
 /// Garaga UltraKeccakZKHonk verifier on Sepolia testnet.
 pub const VERIFIER_ADDRESS_SEPOLIA: felt252 = 0x31706993a5ad13ace1db4980af8f8285e8d6af4a3b3451de94071baf1c9a1d4;
-/// Garaga UltraKeccakZKHonk verifier on Mainnet — fill in before mainnet deployment.
-/// WARNING: Deploying with this value at 0x0 means all ZK proofs will fail on mainnet.
-pub const VERIFIER_ADDRESS_MAINNET: felt252 = 0x0;
+/// Garaga UltraKeccakZKHonk verifier on Mainnet.
+pub const VERIFIER_ADDRESS_MAINNET: felt252 = 0x64cb378d475b6247b0bbbe5ff5c3ec0615fbc2d63ed8e09b55e39c0a8597595;
 
 // ---------------------------------------------------------------------------
 // Question set IDs — identifies which question schema is in use.

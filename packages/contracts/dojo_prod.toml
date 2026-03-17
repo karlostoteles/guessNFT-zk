@@ -10,7 +10,7 @@ default = "whoiswho"
 rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
 account_address = "0x4d03bae72dd5fb55902919a6843d188e9d09917b48b8d9a0edf62ae239df296"
 private_key = "0x49d21c632b6dcd09b73d629a969cf3772b340860eb8e1a9a00cfd9d645134e1"
-# world_address = "0x..."  ← filled after first migration
+world_address = "0x59081bb9aef4054c2898d83ed7ef3f971109fecec7da2360fb853b14f92c988"
 
 [writers]
 "whoiswho" = ["whoiswho-game_actions"]
