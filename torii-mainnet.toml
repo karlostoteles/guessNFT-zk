@@ -1,0 +1,6 @@
+[indexing]
+world_address = "0x059081bb9aef4054c2898d83ed7ef3f971109fecec7da2360fb853b14f92c988"
+polling_interval = 3000
+
+[rpc]
+url = "https://api.cartridge.gg/x/starknet/mainnet"

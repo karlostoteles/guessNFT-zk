@@ -1,16 +1,16 @@
 [world]
 name = "WhoisWho"
 description = "On-chain game logic for WhoisWho online multiplayer."
-seed = "whoiswho_mainnet_20260303"
+seed = "whoiswho_mainnet_20260317"
 
 [namespace]
 default = "whoiswho"
 
 [env]
 rpc_url = "https://api.cartridge.gg/x/starknet/mainnet"
-# account_address = "0x..."
-# private_key = "0x..."
-# world_address = "0x..."
+account_address = "0x4d03bae72dd5fb55902919a6843d188e9d09917b48b8d9a0edf62ae239df296"
+private_key = "0x49d21c632b6dcd09b73d629a969cf3772b340860eb8e1a9a00cfd9d645134e1"
+# world_address = "0x..."  ← filled after first migration
 
 [writers]
 "whoiswho" = ["whoiswho-game_actions"]

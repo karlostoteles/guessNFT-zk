@@ -7,14 +7,13 @@
 import { ToriiClient, type ClientConfig, type Subscription } from '@dojoengine/torii-client';
 import { KATANA_RPC } from './config';
 
-// World address from manifest_dev.json (Katana local dev)
+// World address — mainnet deployment (manifest_prod.json)
 export const WORLD_ADDRESS =
-  import.meta.env.VITE_WORLD_ADDRESS ?? '0x4f057e1fead04aae0e8d385d109b3cd66dbe472216035698c23764d3330a61d';
+  import.meta.env.VITE_WORLD_ADDRESS ?? '0x059081bb9aef4054c2898d83ed7ef3f971109fecec7da2360fb853b14f92c988';
 
-// Torii indexer URL — in dev, use same-origin (Vite proxies /world.World/* to Torii).
-// This avoids CORS/COEP conflicts from cross-origin fetch to localhost:8080.
+// Torii indexer URL — Slot-hosted for mainnet, local proxy for dev.
 export const TORII_URL = import.meta.env.VITE_TORII_URL
-  ?? (import.meta.env.DEV ? '' : 'http://localhost:8080');
+  ?? (import.meta.env.DEV ? '' : 'https://api.cartridge.gg/x/guessnft-zk/torii');
 
 let clientInstance: ToriiClient | null = null;
 let clientPromise: Promise<ToriiClient> | null = null;

@@ -3,11 +3,13 @@
 // Schizodio Merkle tree root (all 999 characters, 418-bit bitmap schema)
 export const TRAITS_ROOT = '0x296f3664665c3719c1498bd6642ed0e91d527b8d1e058fb6de45aaa5b88f9897';
 
-// Game contract address (Katana local — from manifest_dev.json)
-export const GAME_CONTRACT = '0x510009247cf7c71b0a085b4e4527d87120b2895fc330a3cc6cdccf59f0fae5f';
+// Game contract address (mainnet — from manifest_prod.json)
+export const GAME_CONTRACT = '0x50ca0b06629af807a94c92ac75ee68658a1631340a57095a8e37f4290fbf1d3';
 
-// Katana dev network
-export const KATANA_RPC = 'http://localhost:5050';
+// Starknet mainnet RPC
+export const KATANA_RPC = 'https://api.cartridge.gg/x/starknet/mainnet';
+
+// Katana dev accounts (unused on mainnet — kept for local dev)
 export const KATANA_ACCOUNT_1 =
   '0x127fd5f1fe78a71f8bcd1fec63e3fe2f0486b6ecd5c86a0466c3a21fa5cfcec';
 export const KATANA_PRIVATE_KEY_1 =
