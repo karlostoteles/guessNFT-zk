@@ -1,8 +1,8 @@
 /**
  * ZK SDK helpers — Starknet account access and field conversion utilities.
  *
- * Post-merge, getStarknetAccount moves into src/services/starknet/sdk.ts
- * and the field conversion helpers are used by useZKAnswer.ts.
+ * DEV mode uses hardcoded Katana accounts for local testing.
+ * PROD mode uses the Cartridge Controller account (must call connectCartridgeWallet first).
  */
 import { Account, RpcProvider } from 'starknet';
 import type { AccountInterface } from 'starknet';
@@ -13,11 +13,12 @@ import {
   KATANA_ACCOUNT_2,
   KATANA_PRIVATE_KEY_2,
 } from './config';
+import { getAccount } from '@/services/starknet/sdk';
 
 /**
  * Return a Starknet AccountInterface for submitting on-chain transactions.
  * - DEV (Katana): raw Account with katana private key
- * - PROD: returns null (Cartridge Controller account must be injected post-merge)
+ * - PROD: Cartridge Controller account (connect via useWalletConnection first)
  */
 export function getStarknetAccount(playerNum?: 1 | 2): AccountInterface | null {
   if (import.meta.env.DEV) {
@@ -26,8 +27,11 @@ export function getStarknetAccount(playerNum?: 1 | 2): AccountInterface | null {
     const signer = playerNum === 2 ? KATANA_PRIVATE_KEY_2 : KATANA_PRIVATE_KEY_1;
     return new Account({ provider, address, signer });
   }
-  // Post-merge: wire to Cartridge Controller's account via sdk.ts
-  return null;
+  try {
+    return getAccount();
+  } catch {
+    return null;
+  }
 }
 
 // ─── Field conversion utilities ───────────────────────────────────────────────

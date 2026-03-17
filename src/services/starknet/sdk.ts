@@ -3,7 +3,7 @@
  * Static import — no dynamic import delay before connect() is called.
  */
 import Controller from '@cartridge/controller';
-import { RPC_URL, SN_MAIN_CHAIN_ID } from './config';
+import { RPC_URL, SN_MAIN_CHAIN_ID, SESSION_POLICIES } from './config';
 
 export interface ConnectedWallet {
   address: string;
@@ -18,6 +18,7 @@ export function getController() {
     ctrl = new Controller({
       defaultChainId: SN_MAIN_CHAIN_ID,
       chains: [{ rpcUrl: RPC_URL }],
+      policies: SESSION_POLICIES,
     });
   }
   return ctrl;

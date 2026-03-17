@@ -9,6 +9,8 @@ import {
 } from '@/services/starknet/collectionService';
 import { loadCollectionData } from '@/zk/collectionData';
 import { createGameOnChain, joinGameOnChain } from '@/zk/useZKAnswer';
+import { useWalletAddress, useWalletUsername, useWalletStatus } from '@/services/starknet/walletStore';
+import { useWalletConnection } from '@/services/starknet/hooks';
 
 export function ZKLobbyScreen() {
   const {
@@ -31,6 +33,11 @@ export function ZKLobbyScreen() {
   const [selectedPlayerNum, setSelectedPlayerNum] = useState<1 | 2>(1);
 
   const isDev = import.meta.env.DEV;
+  const walletAddress = useWalletAddress();
+  const walletUsername = useWalletUsername();
+  const walletStatus = useWalletStatus();
+  const { connectWallet } = useWalletConnection();
+  const isWalletConnected = !isDev && !!walletAddress;
 
   useEffect(() => {
     let mounted = true;
@@ -53,7 +60,7 @@ export function ZKLobbyScreen() {
     };
   }, []);
 
-  const canInteract = !loadingData && !creating && !joining && !continuing;
+  const canInteract = !loadingData && !creating && !joining && !continuing && (isDev || isWalletConnected);
 
   const normalizedJoinId = useMemo(() => {
     const raw = gameIdInput.trim();
@@ -171,7 +178,7 @@ export function ZKLobbyScreen() {
           </div>
         </div>
 
-        {isDev && (
+        {isDev ? (
           <div
             style={{
               display: 'flex',
@@ -200,6 +207,38 @@ export function ZKLobbyScreen() {
             >
               P2
             </Button>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              gap: 8,
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '10px 12px',
+              background: isWalletConnected ? 'rgba(76,175,80,0.08)' : 'rgba(255,255,255,0.04)',
+              border: `1px solid ${isWalletConnected ? 'rgba(76,175,80,0.2)' : 'rgba(255,255,255,0.08)'}`,
+              borderRadius: 10,
+              fontSize: 12,
+            }}
+          >
+            {isWalletConnected ? (
+              <>
+                <span style={{ color: '#4CAF50', fontWeight: 600 }}>
+                  {walletUsername ?? `${walletAddress!.slice(0, 8)}...${walletAddress!.slice(-6)}`}
+                </span>
+                <span style={{ color: 'rgba(255,255,254,0.3)' }}>connected</span>
+              </>
+            ) : (
+              <Button
+                size="sm"
+                variant="accent"
+                onClick={() => connectWallet()}
+                disabled={walletStatus === 'connecting'}
+              >
+                {walletStatus === 'connecting' ? 'Connecting...' : 'Connect Wallet'}
+              </Button>
+            )}
           </div>
         )}
 
