@@ -86,8 +86,11 @@ export function ZKLobbyScreen() {
   async function handleCreate() {
     setError(null);
     setCreating(true);
+    // In production, the creator is always player 1.
+    // In DEV (Katana), use the toggle selection so we can test both accounts.
+    const creatorPlayerNum: 1 | 2 = isDev ? selectedPlayerNum : 1;
     try {
-      const gameId = await createGameOnChain(selectedPlayerNum);
+      const gameId = await createGameOnChain(creatorPlayerNum);
       setCopied(false);
       setCreatedGameId(gameId);
       setGameIdInput(gameId);
@@ -108,9 +111,12 @@ export function ZKLobbyScreen() {
 
     setError(null);
     setJoining(true);
+    // In production, the joiner is always player 2 (they're responding to the creator who is P1).
+    // In DEV (Katana), use the toggle selection so we can test with different accounts.
+    const joinerPlayerNum: 1 | 2 = isDev ? selectedPlayerNum : 2;
     try {
-      await joinGameOnChain(normalizedJoinId, selectedPlayerNum);
-      await bootstrapLocalStore(normalizedJoinId, selectedPlayerNum, true);
+      await joinGameOnChain(normalizedJoinId, joinerPlayerNum);
+      await bootstrapLocalStore(normalizedJoinId, joinerPlayerNum, true);
     } catch (err) {
       console.error('[zk-lobby] join failed:', err);
       setError(err instanceof Error ? err.message : String(err));
@@ -123,8 +129,10 @@ export function ZKLobbyScreen() {
     if (!createdGameId) return;
     setError(null);
     setContinuing(true);
+    // Creator is always player 1 in production.
+    const creatorPlayerNum: 1 | 2 = isDev ? selectedPlayerNum : 1;
     try {
-      await bootstrapLocalStore(createdGameId, selectedPlayerNum, true);
+      await bootstrapLocalStore(createdGameId, creatorPlayerNum, true);
     } catch (err) {
       console.error('[zk-lobby] continue failed:', err);
       setError(err instanceof Error ? err.message : String(err));

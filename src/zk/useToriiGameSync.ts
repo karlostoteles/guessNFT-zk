@@ -440,12 +440,23 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
             let gameModel: Model | undefined;
 
             if (typeof args[0] === 'string' && args[1] && typeof args[1] === 'object') {
+              // Shape: (entityId: string, models: Record<string, Model>)
               const models = args[1] as Record<string, Model>;
               gameModel = models['whoiswho-Game'];
-            } else if (args[0] && typeof args[0] === 'object' && 'models' in (args[0] as object)) {
-              const entity = args[0] as { models: Record<string, Model> };
-              gameModel = entity.models?.['whoiswho-Game'];
+            } else if (args[0] && typeof args[0] === 'object' && !Array.isArray(args[0])) {
+              const obj = args[0] as any;
+              if ('models' in obj) {
+                // Shape: { models: Record<string, Model>, ... }
+                gameModel = obj.models?.['whoiswho-Game'];
+              } else if ('items' in obj && Array.isArray(obj.items)) {
+                // Shape: Page<Entity> — { items: Entity[], ... }
+                const entities = obj.items as Array<{ models: Record<string, Model> }>;
+                if (entities.length > 0) {
+                  gameModel = entities[0].models?.['whoiswho-Game'];
+                }
+              }
             } else if (Array.isArray(args[0])) {
+              // Shape: Entity[]
               const entities = args[0] as Array<{ models: Record<string, Model> }>;
               if (entities.length > 0) {
                 gameModel = entities[0].models?.['whoiswho-Game'];
@@ -455,7 +466,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
             if (gameModel) {
               handleGameUpdate(parseGameModel(gameModel), gameId, playerNum).catch(err => console.error('[sync-debug] handleGameUpdate THREW:', err));
             } else {
-              console.warn('[torii-sync] Received update but could not parse Game model. Args:', args);
+              console.warn('[torii-sync] Received update but could not parse Game model. args[0] type:', typeof args[0], Array.isArray(args[0]) ? '(array)' : '', args.length > 0 ? JSON.stringify(args[0])?.slice(0, 200) : '(empty)');
             }
           },
         );
@@ -468,6 +479,16 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
         subscriptionRef.current = sub;
       } catch (err) {
         console.error('[torii-sync] Failed to set up subscription:', err);
+        // Retry subscription after 5 s so transient network errors don't leave
+        // the client permanently unsubscribed.
+        if (!cancelled) {
+          window.setTimeout(() => {
+            if (!cancelled && !subscriptionRef.current) {
+              console.log('[torii-sync] Retrying subscription setup...');
+              setupSubscription();
+            }
+          }, 5000);
+        }
       }
     }
 
@@ -498,10 +519,10 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
             handleGameUpdate(parseGameModel(gameModel), gameId, playerNum).catch(err => console.error('[sync-debug] handleGameUpdate THREW:', err));
           }
         }
-      } catch {
-        // Polling failure is non-fatal
+      } catch (err) {
+        console.warn('[torii-sync] Polling failure (non-fatal):', err);
       }
-    }, 3000);
+    }, 1500);
 
     return () => {
       cancelled = true;
@@ -630,6 +651,39 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
     lastProcessedKeyRef.current = stateKey;
     handleUpdateInFlightRef.current = true;
 
+    // ── Auto-detect actual player number from on-chain addresses ──────────────
+    // In production there is no player-number selector in the UI, so both
+    // players end up with onlinePlayerNum=1 in the Zustand store.  The on-chain
+    // Game model contains player1 / player2 addresses that let us derive the
+    // ground truth.  We resolve here and propagate back to the store so that
+    // all downstream effects (commitment, question-sending, guess) also see the
+    // correct value after the subscription re-mounts.
+    let actualPlayerNum: 1 | 2 = myPlayerNum;
+    {
+      const p1 = game.player1;
+      const p2 = game.player2;
+      // Only attempt when both slots are filled (non-zero)
+      if (p1 !== '0x0' && p1 !== '0x00' && p2 !== '0x0' && p2 !== '0x00') {
+        try {
+          const myAddr = BigInt(myChainAddress());
+          const p1Addr = BigInt(p1);
+          const p2Addr = BigInt(p2);
+          if (myAddr !== 0n) {
+            if (p1Addr !== 0n && myAddr === p1Addr) {
+              actualPlayerNum = 1;
+            } else if (p2Addr !== 0n && myAddr === p2Addr) {
+              actualPlayerNum = 2;
+            }
+          }
+        } catch {
+          // Address parsing failed — keep stored playerNum
+        }
+        if (actualPlayerNum !== myPlayerNum) {
+          console.log(`[sync] Auto-correcting playerNum: ${myPlayerNum} → ${actualPlayerNum} (on-chain address match)`);
+          store.setOnlineGame(gameId, actualPlayerNum);
+        }
+      }
+    }
 
     try {
     switch (game.phase) {
@@ -642,15 +696,15 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
       }
 
       case PHASE.COMMIT_PHASE: {
-        const myKey: PlayerId = myPlayerNum === 1 ? 'player1' : 'player2';
+        const myKey: PlayerId = actualPlayerNum === 1 ? 'player1' : 'player2';
         const hasCharacter = !!store.getPlayers()[myKey].secretCharacterId;
         if (!hasCharacter) {
           store.startSetup();
         } else {
           store.setPhase('ONLINE_WAITING');
         }
-        triggerCommitment(gameId, myPlayerNum);
-        const sessionKey = `${gameId}:${store.getGameSessionId()}:${myPlayerNum}`;
+        triggerCommitment(gameId, actualPlayerNum);
+        const sessionKey = `${gameId}:${store.getGameSessionId()}:${actualPlayerNum}`;
         if (committedForSessionRef.current !== sessionKey) {
           lastProcessedKeyRef.current = null;
         }
@@ -658,7 +712,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
       }
 
       case PHASE.PLAYING: {
-        const myPlayerKey: PlayerId = myPlayerNum === 1 ? 'player1' : 'player2';
+        const myPlayerKey: PlayerId = actualPlayerNum === 1 ? 'player1' : 'player2';
 
         if (!game.awaiting_answer) {
 
@@ -687,7 +741,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
           // Keep local board perspective stable; `current_turn` decides only who can act on-chain.
           try {
             store.setActivePlayer(myPlayerKey);
-            const targetPhase = game.current_turn === myPlayerNum ? 'QUESTION_SELECT' : 'ONLINE_WAITING';
+            const targetPhase = game.current_turn === actualPlayerNum ? 'QUESTION_SELECT' : 'ONLINE_WAITING';
             store.setPhase(targetPhase);
           } catch (err) {
             console.error('[sync-debug] setActivePlayer or setPhase THREW:', err);
@@ -701,7 +755,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
           const alreadyHandled = appliedAnswerTurnsRef.current.has(game.turn_count);
           if (alreadyHandled) break;
 
-          const iAmAnswerer = game.current_turn !== myPlayerNum;
+          const iAmAnswerer = game.current_turn !== actualPlayerNum;
           const isGuessPending = game.guess_character_id !== '0x0' && game.guess_character_id !== '0x00' && game.guess_character_id !== '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 
@@ -709,7 +763,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
             // Opponent submitted a guess, not a question — skip proof generation.
             // Defender auto-reveals so the contract can compare.
             store.setPhase('REVEAL_WAITING');
-            triggerAutoReveal(gameId, myPlayerNum);
+            triggerAutoReveal(gameId, actualPlayerNum);
           } else if (iAmAnswerer) {
             const alreadyProcessed = store.getProcessedTurnIds().has(game.turn_count);
             if (!proofInFlightRef.current && !alreadyProcessed) {
@@ -718,7 +772,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
               setProofStatus('proving');
               store.setActivePlayer(myPlayerKey);
               store.receiveOpponentQuestion(game.last_question_id, game.turn_count);
-              triggerProofGeneration(gameId, game, myPlayerNum);
+              triggerProofGeneration(gameId, game, actualPlayerNum);
             }
           } else {
             setProofStatus('idle');
@@ -737,7 +791,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
         }
         revealAttemptsRef.current += 1;
         store.setPhase('REVEAL_WAITING');
-        triggerAutoReveal(gameId, myPlayerNum);
+        triggerAutoReveal(gameId, actualPlayerNum);
         break;
       }
 
@@ -755,7 +809,7 @@ export function useToriiGameSync(store: GameStoreInterface): ZKSyncUIState {
         const winnerPlayer: PlayerId = winnerAddr === game.player1 ? 'player1' : 'player2';
 
         // Read revealed character IDs from both commitments
-        await resolveRevealedCharacters(gameId, game, myPlayerNum);
+        await resolveRevealedCharacters(gameId, game, actualPlayerNum);
 
         store.setWinner(winnerPlayer);
         store.setPhase('GAME_OVER');

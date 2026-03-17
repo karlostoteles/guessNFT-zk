@@ -33,6 +33,12 @@ export async function getToriiClient(): Promise<ToriiClient> {
     return client;
   })();
 
+  // Reset the cached promise on failure so the next call retries instead of
+  // returning a permanently-rejected Promise.
+  clientPromise.catch(() => {
+    clientPromise = null;
+  });
+
   return clientPromise;
 }
 
@@ -41,6 +47,7 @@ export function resetToriiClient(): void {
     clientInstance.free();
     clientInstance = null;
   }
+  clientPromise = null;
 }
 
 // Re-export types used by consumers
