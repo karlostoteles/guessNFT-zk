@@ -42,3 +42,4 @@ onchain/*/target/
 public/nft/
 
 package-lock.json
+.env.mainnet

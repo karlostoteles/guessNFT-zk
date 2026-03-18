@@ -5,7 +5,21 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# SPA redirect — all routes serve index.html
+# Proxy NFT images through Netlify so they are same-origin (needed for canvas/WebGL).
+# The /api/ Vercel-style serverless functions don't run on Netlify.
+# Path-based proxy: /nft-img/<hash>.png → v1assets origin
+[[redirects]]
+  from = "/nft-img/:hash.png"
+  to = "https://v1assets.schizod.io/images/revealed/:hash.png"
+  status = 200
+
+# Proxy NFT metadata JSON
+[[redirects]]
+  from = "/nft-meta/:id.json"
+  to = "https://v1assets.schizod.io/json/revealed/:id.json"
+  status = 200
+
+# SPA redirect — all routes serve index.html (must be LAST)
 [[redirects]]
   from = "/*"
   to = "/index.html"

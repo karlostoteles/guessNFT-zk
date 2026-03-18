@@ -79,7 +79,7 @@ function pickBestQuestionForCPU(
 
 const initialState: GameState = {
   phase: GamePhase.MENU,
-  mode: 'free',
+  mode: 'zk-online',
   characters: CHARACTERS,
   activePlayer: 'player1',
   turnNumber: 1,
